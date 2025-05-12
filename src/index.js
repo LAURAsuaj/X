@@ -1,16 +1,25 @@
-const parser = require("body-parser");
 const express = require('express');
-const app = express();
-const port = 3000;
-const usuarioRoutes = require('./routes/usuario');
-
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 require('dotenv').config();
-app.use(parser.urlencoded({ extended: false })); //permite leer los datos que vienen en la petición
-app.use(parser.json()); // transforma los datos a formato JSON
-//Gestión de las rutas usando el middleware
+
+const app = express();
+const port = 4000;
+
+// Middlewares
+app.use(express.json()); // ya hace lo que body-parser hacía
+app.use(express.urlencoded({ extended: false }));
+
+// Rutas
+const usuarioRoutes = require('./routes/usuario');
+const publicacionesRoutes = require('./routes/publicacion');
+const chatsRoutes = require('./routes/chat');
+const authRoutes = require('./routes/autenticacion');
+
+app.use(express.json()); 
 app.use('/api/usuarios', usuarioRoutes);
-app.use(express.json());
+app.use('/', publicacionesRoutes);
+app.use('/', chatsRoutes);
+app.use('/api/auth', authRoutes); 
 //Conexión a la base de datos
 mongoose
     .connect(process.env.MONGODB_URI)
